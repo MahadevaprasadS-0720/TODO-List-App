@@ -1,0 +1,62 @@
+### 1. Health Check
+GET http://localhost:5000/api/health
+
+### 2. Get Todo Statistics (Total, Completed, Pending, Overdue, Priority & Category Breakdowns)
+GET http://localhost:5000/api/todos/stats
+
+### 3. Create Todo 1 (High Priority & Overdue Date)
+POST http://localhost:5000/api/todos
+Content-Type: application/json
+
+{
+  "title": "Fix critical database indexing bug",
+  "description": "Optimize Mongoose indexes for faster query performance.",
+  "priority": "high",
+  "category": "Backend",
+  "dueDate": "2026-01-01T00:00:00.000Z"
+}
+
+### 4. Create Todo 2 (Medium Priority)
+POST http://localhost:5000/api/todos
+Content-Type: application/json
+
+{
+  "title": "Design responsive navigation bar",
+  "description": "Implement modern Tailwind CSS navbar with mobile drawer.",
+  "priority": "medium",
+  "category": "Frontend",
+  "dueDate": "2026-08-25T12:00:00.000Z"
+}
+
+### 5. Create Todo 3 (Low Priority & Completed)
+POST http://localhost:5000/api/todos
+Content-Type: application/json
+
+{
+  "title": "Update project documentation",
+  "description": "Write comprehensive README with API specifications.",
+  "completed": true,
+  "priority": "low",
+  "category": "Documentation"
+}
+
+### 6. Get All Todos
+GET http://localhost:5000/api/todos
+
+### 7. Filter Todos by Category, Priority & Completed Status
+GET http://localhost:5000/api/todos?category=Backend&priority=high&completed=false
+
+### 8. Search Todos by Title Keyword
+GET http://localhost:5000/api/todos?search=navigation
+
+### 9. Sort Todos by Priority (High -> Medium -> Low)
+GET http://localhost:5000/api/todos?sortBy=priority&order=desc
+
+### 10. Sort Todos by Due Date (Ascending)
+GET http://localhost:5000/api/todos?sortBy=dueDate&order=asc
+
+### 11. Toggle Todo Completed Status (Replace {id} with real Mongo ID)
+PATCH http://localhost:5000/api/todos/65d123456789abcdef012345/toggle
+
+### 12. Delete Todo by ID (Replace {id} with real Mongo ID)
+DELETE http://localhost:5000/api/todos/65d123456789abcdef012345
