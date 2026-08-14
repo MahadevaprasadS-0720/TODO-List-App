@@ -14,6 +14,7 @@ import {
   Moon,
   Sparkles,
   ShieldCheck,
+  CheckCircle2,
 } from 'lucide-react';
 
 export default function LoginScreen() {
@@ -43,7 +44,7 @@ export default function LoginScreen() {
     try {
       if (isRegister) {
         await registerWithEmail(email.trim(), password, name.trim());
-        toast.success('Account created successfully! Welcome aboard! 🎉');
+        toast.success('Account created successfully! Welcome to TaskFlow! 🎉');
       } else {
         await loginWithEmail(email.trim(), password);
         toast.success('Signed in successfully! 👋');
@@ -51,7 +52,11 @@ export default function LoginScreen() {
     } catch (error) {
       console.error('Auth submit error:', error);
       let errorMsg = 'Authentication failed. Please check your credentials.';
-      if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
+      if (
+        error.code === 'auth/user-not-found' ||
+        error.code === 'auth/wrong-password' ||
+        error.code === 'auth/invalid-credential'
+      ) {
         errorMsg = 'Invalid email or password.';
       } else if (error.code === 'auth/email-already-in-use') {
         errorMsg = 'An account with this email already exists.';
@@ -83,67 +88,52 @@ export default function LoginScreen() {
 
   return (
     <div
-      className={`min-h-screen flex flex-col justify-center items-center px-4 sm:px-6 lg:px-8 relative overflow-hidden transition-colors duration-300 ${
+      className={`min-h-screen flex flex-col justify-center items-center px-4 sm:px-6 lg:px-8 relative overflow-hidden transition-colors duration-500 ${
         isDark ? 'bg-slate-950 text-slate-100' : 'bg-slate-50 text-slate-900'
       }`}
     >
-      {/* Background ambient lighting effects */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-tr from-indigo-600/20 via-purple-600/20 to-pink-500/20 rounded-full blur-[140px] pointer-events-none" />
-      <div className="absolute bottom-10 left-10 w-[300px] h-[300px] bg-cyan-500/10 rounded-full blur-[100px] pointer-events-none" />
-      <div className="absolute top-10 right-10 w-[300px] h-[300px] bg-purple-500/10 rounded-full blur-[100px] pointer-events-none" />
+      {/* Dynamic Ambient Glowing Orbs */}
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[650px] h-[650px] bg-gradient-to-tr from-indigo-600/30 via-purple-600/25 to-pink-500/25 rounded-full blur-[150px] pointer-events-none animate-pulse" />
+      <div className="absolute bottom-10 left-10 w-[350px] h-[350px] bg-cyan-500/20 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute top-10 right-10 w-[350px] h-[350px] bg-purple-500/20 rounded-full blur-[120px] pointer-events-none" />
 
-      {/* Top right theme toggle */}
-      <div className="absolute top-6 right-6 z-20">
-        <button
-          onClick={toggleTheme}
-          className={`p-2.5 rounded-full border transition-all duration-300 ${
-            isDark
-              ? 'bg-slate-900/80 border-slate-800 text-amber-400 hover:bg-slate-800 hover:scale-105'
-              : 'bg-white/80 border-slate-200 text-slate-700 hover:bg-slate-100 hover:scale-105'
-          }`}
-          title={`Switch to ${isDark ? 'Light' : 'Dark'} Mode`}
-        >
-          {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-        </button>
-      </div>
 
-      {/* Card Container */}
-      <div className="w-full max-w-md relative z-10">
-        {/* Brand header */}
+
+      {/* Glass Container */}
+      <div className="w-full max-w-md relative z-10 my-8">
+        {/* Brand Header */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center p-3.5 rounded-2xl bg-gradient-to-tr from-indigo-600 via-purple-600 to-pink-500 shadow-xl shadow-indigo-500/25 text-white mb-4">
-            <ListTodo className="w-8 h-8" />
+          <div className="inline-flex items-center justify-center p-4 rounded-3xl bg-gradient-to-tr from-indigo-600 via-purple-600 to-pink-500 shadow-2xl shadow-indigo-500/30 text-white mb-4 border border-white/20">
+            <ListTodo className="w-9 h-9" />
           </div>
-          <h1 className="text-3xl font-extrabold tracking-tight bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 bg-clip-text text-transparent">
-            TaskFlow 2026
+          <h1 className="text-4xl font-extrabold tracking-tight bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 bg-clip-text text-transparent">
+            TaskFlow
           </h1>
-          <p className="text-sm text-slate-400 mt-2">
-            Organize, track, and accomplish your daily tasks with real-time cloud sync.
+          <p className="text-sm text-slate-400 mt-2 font-medium">
+            Next-generation task management with real-time cloud sync.
           </p>
         </div>
 
-        {/* Glassmorphic Form Card */}
+        {/* Premium Frosted Glass Card */}
         <div
-          className={`p-8 rounded-3xl border shadow-2xl backdrop-blur-2xl transition-all ${
-            isDark
-              ? 'bg-slate-900/60 border-slate-800/80 shadow-slate-950/50'
-              : 'bg-white/70 border-slate-200/90 shadow-slate-200/50'
+          className={`p-8 sm:p-9 rounded-3xl transition-all duration-300 ${
+            isDark ? 'glass-panel-dark' : 'glass-panel-light'
           }`}
         >
-          {/* Mode Switcher Tabs */}
+          {/* Sign In / Register Mode Switcher */}
           <div
-            className={`grid grid-cols-2 p-1 rounded-2xl border mb-6 ${
-              isDark ? 'bg-slate-950/60 border-slate-800' : 'bg-slate-100 border-slate-200'
+            className={`grid grid-cols-2 p-1.5 rounded-2xl border mb-6 ${
+              isDark ? 'bg-slate-950/70 border-slate-800/80' : 'bg-slate-100/80 border-slate-200'
             }`}
           >
             <button
               type="button"
               onClick={() => setIsRegister(false)}
-              className={`py-2 text-xs font-semibold rounded-xl transition-all ${
+              className={`py-2.5 text-xs font-bold tracking-wide rounded-xl transition-all ${
                 !isRegister
                   ? isDark
-                    ? 'bg-slate-800 text-white shadow-sm'
-                    : 'bg-white text-slate-900 shadow-sm'
+                    ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-md shadow-indigo-500/25'
+                    : 'bg-white text-indigo-600 shadow-md shadow-slate-200'
                   : 'text-slate-400 hover:text-slate-200'
               }`}
             >
@@ -152,11 +142,11 @@ export default function LoginScreen() {
             <button
               type="button"
               onClick={() => setIsRegister(true)}
-              className={`py-2 text-xs font-semibold rounded-xl transition-all ${
+              className={`py-2.5 text-xs font-bold tracking-wide rounded-xl transition-all ${
                 isRegister
                   ? isDark
-                    ? 'bg-slate-800 text-white shadow-sm'
-                    : 'bg-white text-slate-900 shadow-sm'
+                    ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-md shadow-indigo-500/25'
+                    : 'bg-white text-indigo-600 shadow-md shadow-slate-200'
                   : 'text-slate-400 hover:text-slate-200'
               }`}
             >
@@ -168,20 +158,19 @@ export default function LoginScreen() {
           <form onSubmit={handleSubmit} className="space-y-4">
             {isRegister && (
               <div>
-                <label className="block text-xs font-medium text-slate-400 mb-1.5">
+                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">
                   Full Name
                 </label>
                 <div
-                  className={`flex items-center rounded-xl border px-3.5 py-2.5 transition ${
-                    isDark
-                      ? 'bg-slate-950/70 border-slate-800 text-white focus-within:border-indigo-500 focus-within:ring-2 focus-within:ring-indigo-500/20'
-                      : 'bg-white border-slate-200 text-slate-900 focus-within:border-indigo-500 focus-within:ring-2 focus-within:ring-indigo-500/20'
+                  className={`flex items-center rounded-2xl px-4 py-3 transition-all ${
+                    isDark ? 'glass-input-dark' : 'glass-input-light'
                   }`}
                 >
-                  <User className="w-4 h-4 text-slate-400 mr-2.5 shrink-0" />
+                  <User className="w-4 h-4 text-slate-400 mr-3 shrink-0" />
                   <input
                     type="text"
                     required
+                    autoComplete="name"
                     placeholder="John Doe"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
@@ -192,20 +181,19 @@ export default function LoginScreen() {
             )}
 
             <div>
-              <label className="block text-xs font-medium text-slate-400 mb-1.5">
+              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">
                 Email Address
               </label>
               <div
-                className={`flex items-center rounded-xl border px-3.5 py-2.5 transition ${
-                  isDark
-                    ? 'bg-slate-950/70 border-slate-800 text-white focus-within:border-indigo-500 focus-within:ring-2 focus-within:ring-indigo-500/20'
-                    : 'bg-white border-slate-200 text-slate-900 focus-within:border-indigo-500 focus-within:ring-2 focus-within:ring-indigo-500/20'
+                className={`flex items-center rounded-2xl px-4 py-3 transition-all ${
+                  isDark ? 'glass-input-dark' : 'glass-input-light'
                 }`}
               >
-                <Mail className="w-4 h-4 text-slate-400 mr-2.5 shrink-0" />
+                <Mail className="w-4 h-4 text-slate-400 mr-3 shrink-0" />
                 <input
                   type="email"
                   required
+                  autoComplete="email"
                   placeholder="name@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -215,25 +203,25 @@ export default function LoginScreen() {
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-slate-400 mb-1.5">
+              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">
                 Password
               </label>
               <div
-                className={`flex items-center rounded-xl border px-3.5 py-2.5 transition ${
-                  isDark
-                    ? 'bg-slate-950/70 border-slate-800 text-white focus-within:border-indigo-500 focus-within:ring-2 focus-within:ring-indigo-500/20'
-                    : 'bg-white border-slate-200 text-slate-900 focus-within:border-indigo-500 focus-within:ring-2 focus-within:ring-indigo-500/20'
+                className={`flex items-center rounded-2xl px-4 py-3 transition-all ${
+                  isDark ? 'glass-input-dark' : 'glass-input-light'
                 }`}
               >
-                <Lock className="w-4 h-4 text-slate-400 mr-2.5 shrink-0" />
+                <Lock className="w-4 h-4 text-slate-400 mr-3 shrink-0" />
                 <input
                   type={showPassword ? 'text' : 'password'}
                   required
+                  autoComplete={isRegister ? 'new-password' : 'current-password'}
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="w-full bg-transparent border-none outline-none text-sm placeholder:text-slate-500"
                 />
+
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
@@ -248,13 +236,13 @@ export default function LoginScreen() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full mt-2 py-3 px-4 rounded-xl font-medium text-sm text-white bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 hover:from-indigo-500 hover:to-pink-500 shadow-lg shadow-indigo-500/25 transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              className="w-full mt-3 py-3.5 px-4 rounded-2xl font-bold text-sm text-white bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 hover:from-indigo-500 hover:to-pink-500 shadow-xl shadow-indigo-500/30 transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
               {loading ? (
                 <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
               ) : (
                 <>
-                  <span>{isRegister ? 'Create Account' : 'Sign In with Email'}</span>
+                  <span>{isRegister ? 'Create Free Account' : 'Sign In with Email'}</span>
                   <ArrowRight className="w-4 h-4" />
                 </>
               )}
@@ -264,7 +252,7 @@ export default function LoginScreen() {
           {/* Divider */}
           <div className="my-6 flex items-center gap-3">
             <div className={`flex-1 h-px ${isDark ? 'bg-slate-800' : 'bg-slate-200'}`} />
-            <span className="text-xs uppercase font-semibold text-slate-400 tracking-wider">
+            <span className="text-xs uppercase font-bold text-slate-400 tracking-wider">
               Or continue with
             </span>
             <div className={`flex-1 h-px ${isDark ? 'bg-slate-800' : 'bg-slate-200'}`} />
@@ -275,9 +263,9 @@ export default function LoginScreen() {
             type="button"
             onClick={handleGoogleSignIn}
             disabled={loading}
-            className={`w-full py-2.5 px-4 rounded-xl border text-sm font-medium transition-all flex items-center justify-center gap-3 ${
+            className={`w-full py-3 px-4 rounded-2xl border text-sm font-semibold transition-all flex items-center justify-center gap-3 ${
               isDark
-                ? 'bg-slate-950/80 border-slate-800 text-slate-200 hover:bg-slate-800/80 hover:border-slate-700'
+                ? 'bg-slate-950/80 border-slate-800 text-slate-200 hover:bg-slate-800 hover:border-slate-700'
                 : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300'
             }`}
           >
@@ -303,9 +291,9 @@ export default function LoginScreen() {
           </button>
         </div>
 
-        {/* Footer info badge */}
-        <div className="mt-6 flex items-center justify-center gap-2 text-xs text-slate-400">
-          <ShieldCheck className="w-4 h-4 text-emerald-500" />
+        {/* Footer Info Badge */}
+        <div className="mt-6 flex items-center justify-center gap-2 text-xs font-medium text-slate-400">
+          <ShieldCheck className="w-4 h-4 text-emerald-400" />
           <span>Encrypted Cloud Security & User Data Isolation</span>
         </div>
       </div>

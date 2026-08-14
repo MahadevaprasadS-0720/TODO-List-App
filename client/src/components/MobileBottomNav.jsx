@@ -22,8 +22,8 @@ export default function MobileBottomNav({
     <div
       className={`md:hidden fixed bottom-0 left-0 right-0 z-40 backdrop-blur-2xl border-t px-4 py-2 flex items-center justify-around transition-colors duration-300 ${
         isDark
-          ? 'bg-slate-950/85 border-slate-800/80 text-slate-300'
-          : 'bg-white/90 border-slate-200/90 text-slate-700'
+          ? 'bg-slate-950/80 border-slate-800/80 text-slate-300'
+          : 'bg-white/80 border-slate-200/90 text-slate-700'
       }`}
     >
       {navItems.slice(0, 2).map((item) => {
@@ -34,14 +34,14 @@ export default function MobileBottomNav({
           <button
             key={item.id}
             onClick={() => setActiveStatus(item.id)}
-            className={`flex flex-col items-center gap-1 py-1 px-3 rounded-xl transition ${
+            className={`flex flex-col items-center gap-1 py-1 px-3 rounded-2xl transition ${
               isActive
-                ? 'text-indigo-500 font-bold scale-105'
+                ? 'text-indigo-400 font-extrabold scale-105'
                 : 'text-slate-400 hover:text-slate-200'
             }`}
           >
             <Icon className="w-5 h-5" />
-            <span className="text-[10px] font-medium">{item.label}</span>
+            <span className="text-[10px] font-bold">{item.label}</span>
           </button>
         );
       })}
@@ -49,7 +49,7 @@ export default function MobileBottomNav({
       {/* Center Floating Plus Button */}
       <button
         onClick={onOpenAddModal}
-        className="-mt-5 p-3.5 rounded-full bg-gradient-to-tr from-indigo-600 to-purple-600 text-white shadow-lg shadow-indigo-500/40 border-2 border-slate-950 hover:scale-110 active:scale-95 transition-transform"
+        className="-mt-6 p-3.5 rounded-full bg-gradient-to-tr from-indigo-600 via-purple-600 to-pink-600 text-white shadow-xl shadow-indigo-500/40 border-2 border-slate-950 hover:scale-110 active:scale-95 transition-transform"
         title="Create New Task"
       >
         <Plus className="w-6 h-6" />
@@ -63,14 +63,14 @@ export default function MobileBottomNav({
           <button
             key={item.id}
             onClick={() => setActiveStatus(item.id)}
-            className={`flex flex-col items-center gap-1 py-1 px-3 rounded-xl transition ${
+            className={`flex flex-col items-center gap-1 py-1 px-3 rounded-2xl transition ${
               isActive
-                ? 'text-indigo-500 font-bold scale-105'
+                ? 'text-indigo-400 font-extrabold scale-105'
                 : 'text-slate-400 hover:text-slate-200'
             }`}
           >
             <Icon className="w-5 h-5" />
-            <span className="text-[10px] font-medium">{item.label}</span>
+            <span className="text-[10px] font-bold">{item.label}</span>
           </button>
         );
       })}

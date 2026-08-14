@@ -29,10 +29,10 @@ export default function Sidebar({
   const isDark = theme === 'dark';
 
   const statusItems = [
-    { id: 'all', label: 'All Tasks', icon: Layers, count: stats?.total ?? 0, color: 'text-indigo-500' },
-    { id: 'pending', label: 'Pending', icon: Clock, count: stats?.pending ?? 0, color: 'text-amber-500' },
-    { id: 'completed', label: 'Completed', icon: CheckCircle2, count: stats?.completed ?? 0, color: 'text-emerald-500' },
-    { id: 'overdue', label: 'Overdue', icon: AlertTriangle, count: stats?.overdue ?? 0, color: 'text-rose-500' },
+    { id: 'all', label: 'All Tasks', icon: Layers, count: stats?.total ?? 0, color: 'text-indigo-400' },
+    { id: 'pending', label: 'Pending', icon: Clock, count: stats?.pending ?? 0, color: 'text-amber-400' },
+    { id: 'completed', label: 'Completed', icon: CheckCircle2, count: stats?.completed ?? 0, color: 'text-emerald-400' },
+    { id: 'overdue', label: 'Overdue', icon: AlertTriangle, count: stats?.overdue ?? 0, color: 'text-rose-400' },
   ];
 
   const priorityItems = [
@@ -48,7 +48,7 @@ export default function Sidebar({
       {isOpen && (
         <div
           onClick={onClose}
-          className="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-40 md:hidden"
+          className="fixed inset-0 bg-slate-950/70 backdrop-blur-md z-40 md:hidden"
         />
       )}
 
@@ -58,15 +58,15 @@ export default function Sidebar({
           isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
         } ${
           isDark
-            ? 'bg-slate-900/60 border-r border-slate-800/80 text-slate-300'
-            : 'bg-white/80 border-r border-slate-200/90 text-slate-700'
-        } backdrop-blur-xl flex flex-col justify-between p-5 overflow-y-auto shrink-0`}
+            ? 'bg-slate-950/80 border-r border-indigo-500/15 text-slate-300'
+            : 'bg-white/80 border-r border-slate-200 text-slate-700'
+        } backdrop-blur-2xl flex flex-col justify-between p-5 overflow-y-auto shrink-0`}
       >
         <div className="space-y-6">
           {/* Status Navigation */}
           <div>
-            <h2 className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-3 px-2 flex items-center gap-1.5">
-              <CheckSquare className="w-3.5 h-3.5" /> Status Filter
+            <h2 className="text-xs font-extrabold uppercase tracking-wider text-slate-400 mb-3 px-2 flex items-center gap-2">
+              <CheckSquare className="w-3.5 h-3.5 text-indigo-400" /> Status Filter
             </h2>
             <nav className="space-y-1">
               {statusItems.map((item) => {
@@ -80,13 +80,13 @@ export default function Sidebar({
                       setActiveStatus(item.id);
                       onClose();
                     }}
-                    className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-sm font-medium transition-all ${
+                    className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs font-bold transition-all ${
                       isActive
                         ? isDark
-                          ? 'bg-indigo-600/20 text-indigo-400 border border-indigo-500/30'
-                          : 'bg-indigo-50 text-indigo-600 border border-indigo-200'
+                          ? 'bg-indigo-600/20 text-indigo-300 border border-indigo-500/30 shadow-md shadow-indigo-500/10 backdrop-blur-md'
+                          : 'bg-indigo-50 text-indigo-600 border border-indigo-200 shadow-sm'
                         : isDark
-                        ? 'hover:bg-slate-800/60 hover:text-slate-200'
+                        ? 'hover:bg-slate-900/60 hover:text-slate-100'
                         : 'hover:bg-slate-100 hover:text-slate-900'
                     }`}
                   >
@@ -95,13 +95,13 @@ export default function Sidebar({
                       <span>{item.label}</span>
                     </div>
                     <span
-                      className={`text-xs px-2 py-0.5 rounded-full font-semibold ${
+                      className={`text-xs px-2.5 py-0.5 rounded-full font-bold ${
                         isActive
                           ? isDark
-                            ? 'bg-indigo-500/30 text-indigo-300'
+                            ? 'bg-indigo-500/30 text-indigo-200'
                             : 'bg-indigo-200 text-indigo-800'
                           : isDark
-                          ? 'bg-slate-800 text-slate-400'
+                          ? 'bg-slate-900/80 text-slate-400 border border-white/5'
                           : 'bg-slate-200 text-slate-600'
                       }`}
                     >
@@ -115,8 +115,8 @@ export default function Sidebar({
 
           {/* Priority Filters */}
           <div>
-            <h2 className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-3 px-2 flex items-center gap-1.5">
-              <Flame className="w-3.5 h-3.5" /> Priority Level
+            <h2 className="text-xs font-extrabold uppercase tracking-wider text-slate-400 mb-3 px-2 flex items-center gap-2">
+              <Flame className="w-3.5 h-3.5 text-rose-400" /> Priority Level
             </h2>
             <div className="space-y-1">
               {priorityItems.map((item) => {
@@ -129,13 +129,13 @@ export default function Sidebar({
                       setActivePriority(item.id);
                       onClose();
                     }}
-                    className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm font-medium transition-all ${
+                    className={`w-full flex items-center gap-2.5 px-3.5 py-2 rounded-2xl text-xs font-semibold transition-all ${
                       isActive
                         ? isDark
-                          ? 'bg-purple-600/20 text-purple-400 border border-purple-500/30'
+                          ? 'bg-purple-600/20 text-purple-300 border border-purple-500/30 backdrop-blur-md'
                           : 'bg-purple-50 text-purple-700 border border-purple-200'
                         : isDark
-                        ? 'hover:bg-slate-800/60 hover:text-slate-200'
+                        ? 'hover:bg-slate-900/60 hover:text-slate-100'
                         : 'hover:bg-slate-100 hover:text-slate-900'
                     }`}
                   >
@@ -153,8 +153,8 @@ export default function Sidebar({
 
           {/* Categories Navigation */}
           <div>
-            <h2 className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-3 px-2 flex items-center gap-1.5">
-              <Folder className="w-3.5 h-3.5" /> Categories
+            <h2 className="text-xs font-extrabold uppercase tracking-wider text-slate-400 mb-3 px-2 flex items-center gap-2">
+              <Folder className="w-3.5 h-3.5 text-amber-400" /> Categories
             </h2>
             <div className="space-y-1">
               <button
@@ -162,13 +162,13 @@ export default function Sidebar({
                   setActiveCategory('all');
                   onClose();
                 }}
-                className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-sm font-medium transition-all ${
+                className={`w-full flex items-center justify-between px-3.5 py-2 rounded-2xl text-xs font-semibold transition-all ${
                   activeCategory === 'all'
                     ? isDark
-                      ? 'bg-indigo-600/20 text-indigo-400 border border-indigo-500/30'
+                      ? 'bg-indigo-600/20 text-indigo-300 border border-indigo-500/30'
                       : 'bg-indigo-50 text-indigo-600 border border-indigo-200'
                     : isDark
-                    ? 'hover:bg-slate-800/60 hover:text-slate-200'
+                    ? 'hover:bg-slate-900/60 hover:text-slate-100'
                     : 'hover:bg-slate-100 hover:text-slate-900'
                 }`}
               >
@@ -180,7 +180,6 @@ export default function Sidebar({
 
               {categories.map((cat) => {
                 const isActive = activeCategory.toLowerCase() === cat.toLowerCase();
-                const catCount = stats?.byCategory?.[cat] || 0;
 
                 return (
                   <button
@@ -189,13 +188,13 @@ export default function Sidebar({
                       setActiveCategory(cat);
                       onClose();
                     }}
-                    className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-sm font-medium transition-all ${
+                    className={`w-full flex items-center justify-between px-3.5 py-2 rounded-2xl text-xs font-semibold transition-all ${
                       isActive
                         ? isDark
-                          ? 'bg-indigo-600/20 text-indigo-400 border border-indigo-500/30'
+                          ? 'bg-indigo-600/20 text-indigo-300 border border-indigo-500/30 backdrop-blur-md'
                           : 'bg-indigo-50 text-indigo-600 border border-indigo-200'
                         : isDark
-                        ? 'hover:bg-slate-800/60 hover:text-slate-200'
+                        ? 'hover:bg-slate-900/60 hover:text-slate-100'
                         : 'hover:bg-slate-100 hover:text-slate-900'
                     }`}
                   >
@@ -203,11 +202,6 @@ export default function Sidebar({
                       <Tag className="w-3.5 h-3.5 text-indigo-400" />
                       <span>{cat}</span>
                     </div>
-                    {catCount > 0 && (
-                      <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-slate-800/40 text-slate-400">
-                        {catCount}
-                      </span>
-                    )}
                   </button>
                 );
               })}
@@ -216,12 +210,12 @@ export default function Sidebar({
         </div>
 
         {/* Sidebar Footer Badge */}
-        <div className="pt-6 border-t border-slate-800/50">
-          <div className="p-3 rounded-2xl bg-gradient-to-br from-indigo-500/10 to-purple-500/10 border border-indigo-500/20 text-xs text-slate-400 flex items-center gap-2.5">
-            <Sparkles className="w-4 h-4 text-indigo-400 shrink-0" />
+        <div className="pt-6 border-t border-indigo-500/15">
+          <div className="p-3.5 rounded-2xl bg-gradient-to-br from-indigo-500/10 via-purple-500/10 to-pink-500/10 border border-indigo-500/20 text-xs text-slate-400 flex items-center gap-3 shadow-sm backdrop-blur-md">
+            <Sparkles className="w-4 h-4 text-indigo-400 shrink-0 animate-pulse" />
             <div>
-              <p className="font-semibold text-slate-200">TaskFlow 2026</p>
-              <p className="text-[11px] text-slate-400">Full-Stack MERN Architecture</p>
+              <p className="font-extrabold text-slate-200">TaskFlow Workspace</p>
+              <p className="text-[10px] font-medium text-slate-400">Encrypted Cloud Sync</p>
             </div>
           </div>
         </div>

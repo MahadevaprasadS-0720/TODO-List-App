@@ -50,7 +50,7 @@ export default function ConfirmDeleteModal({
           >
             {/* Modal Header */}
             <div className="flex items-center justify-between mb-4">
-              <div className="p-3 rounded-2xl bg-rose-500/10 text-rose-500 border border-rose-500/20">
+              <div className="p-3 rounded-2xl bg-rose-500/10 text-rose-400 border border-rose-500/20 shadow-sm">
                 <AlertTriangle className="w-6 h-6" />
               </div>
               <button
@@ -62,13 +62,13 @@ export default function ConfirmDeleteModal({
             </div>
 
             {/* Content */}
-            <h3 className="text-xl font-bold tracking-tight mb-2">Delete Task?</h3>
-            <p className="text-sm text-slate-400 mb-4 leading-relaxed">
+            <h3 className="text-xl font-extrabold tracking-tight mb-2">Delete Task?</h3>
+            <p className="text-xs text-slate-400 mb-4 leading-relaxed font-medium">
               Are you sure you want to delete this task? This action cannot be undone.
             </p>
 
             {todoTitle && (
-              <div className="p-3 rounded-xl bg-slate-900/60 dark:bg-slate-900/80 border border-slate-800 text-xs font-semibold text-slate-300 mb-6 truncate">
+              <div className="p-3.5 rounded-2xl bg-slate-900/60 dark:bg-slate-950/80 border border-slate-800 text-xs font-semibold text-slate-300 mb-6 truncate">
                 "{todoTitle}"
               </div>
             )}
@@ -78,14 +78,14 @@ export default function ConfirmDeleteModal({
               <button
                 type="button"
                 onClick={onCancel}
-                className="px-4 py-2.5 rounded-xl text-sm font-medium text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 transition"
+                className="px-4 py-2.5 rounded-2xl text-xs font-bold text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 transition"
               >
                 Cancel
               </button>
               <button
                 type="button"
                 onClick={onConfirm}
-                className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-medium text-sm text-white bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-500 hover:to-red-500 shadow-lg shadow-rose-500/25 transition-all hover:scale-105 active:scale-95"
+                className="flex items-center gap-2 px-5 py-2.5 rounded-2xl font-bold text-xs text-white bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-500 hover:to-red-500 shadow-xl shadow-rose-500/30 transition-all hover:scale-105 active:scale-95 border border-white/10"
               >
                 <Trash2 className="w-4 h-4" />
                 <span>Delete Task</span>

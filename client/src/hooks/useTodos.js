@@ -5,9 +5,6 @@ import { collection, onSnapshot, query, where } from 'firebase/firestore';
 import { db } from '../firebase';
 import { useAuth } from '../context/AuthContext';
 
-
-
-
 export function useTodos() {
   const { currentUser } = useAuth();
   const userId = currentUser?.uid;
@@ -18,10 +15,12 @@ export function useTodos() {
   const [error, setError] = useState(null);
   const [isOnline, setIsOnline] = useState(navigator.onLine);
 
-  // Filters & Sorting
+  // Filters, View Mode & Sorting
+  const [viewMode, setViewMode] = useState('list'); // 'list' | 'kanban'
   const [activeStatus, setActiveStatus] = useState('all');
   const [activePriority, setActivePriority] = useState('all');
   const [activeCategory, setActiveCategory] = useState('all');
+  const [dueDateFilter, setDueDateFilter] = useState('all'); // 'all' | 'today' | 'this-week' | 'overdue'
   const [searchTerm, setSearchTerm] = useState('');
   const [sortBy, setSortBy] = useState('createdAt');
   const [order, setOrder] = useState('desc');
@@ -36,26 +35,27 @@ export function useTodos() {
     }
   }, [userId]);
 
-
-  // Fetch Raw Todos once or on manual refresh for current user
+  // Fetch Raw Todos
   const fetchTodos = useCallback(async () => {
     if (!userId) {
       setRawTodos([]);
       setLoading(false);
-      return;
+      return [];
     }
     setLoading(true);
     setError(null);
     try {
       const res = await todoService.getTodos({}, userId);
-      if (res?.data?.todos) {
-        setRawTodos(res.data.todos);
-      }
+      const tasks = res?.data?.todos || [];
+      setRawTodos(tasks);
+      return tasks;
     } catch (err) {
       setError(err.message || 'Failed to load tasks');
+      return [];
     } finally {
       setLoading(false);
     }
+
   }, [userId]);
 
   // Real-time Firestore sync setup scoped to currentUser.uid
@@ -95,25 +95,27 @@ export function useTodos() {
     };
   }, [userId, checkHealth, fetchTodos]);
 
-  // Derived filtered & sorted todos array (Instant recalculation on filter change)
+  // Derived filtered & sorted todos array
   const todos = useMemo(() => {
     let result = [...rawTodos];
 
-    // Search filter
+    // Search filter (Title, Description, or Subtasks)
     if (searchTerm) {
       const q = searchTerm.toLowerCase();
       result = result.filter(
         (t) =>
           (t.title && t.title.toLowerCase().includes(q)) ||
-          (t.description && t.description.toLowerCase().includes(q))
+          (t.description && t.description.toLowerCase().includes(q)) ||
+          (Array.isArray(t.subtasks) &&
+            t.subtasks.some((s) => s.title && s.title.toLowerCase().includes(q)))
       );
     }
 
     // Status filter
     if (activeStatus === 'completed') {
-      result = result.filter((t) => t.completed);
+      result = result.filter((t) => t.completed || t.kanbanStatus === 'done');
     } else if (activeStatus === 'pending') {
-      result = result.filter((t) => !t.completed);
+      result = result.filter((t) => !t.completed && t.kanbanStatus !== 'done');
     } else if (activeStatus === 'overdue') {
       const now = new Date();
       result = result.filter(
@@ -131,6 +133,30 @@ export function useTodos() {
     if (activeCategory !== 'all') {
       const c = activeCategory.toLowerCase();
       result = result.filter((t) => (t.category || '').toLowerCase() === c);
+    }
+
+    // Due Date Filter
+    if (dueDateFilter !== 'all') {
+      const now = new Date();
+      const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      const todayEnd = new Date(todayStart.getTime() + 24 * 60 * 60 * 1000);
+      const weekEnd = new Date(todayStart.getTime() + 7 * 24 * 60 * 60 * 1000);
+
+      if (dueDateFilter === 'today') {
+        result = result.filter((t) => {
+          if (!t.dueDate) return false;
+          const d = new Date(t.dueDate);
+          return d >= todayStart && d < todayEnd;
+        });
+      } else if (dueDateFilter === 'this-week') {
+        result = result.filter((t) => {
+          if (!t.dueDate) return false;
+          const d = new Date(t.dueDate);
+          return d >= todayStart && d < weekEnd;
+        });
+      } else if (dueDateFilter === 'overdue') {
+        result = result.filter((t) => !t.completed && t.dueDate && new Date(t.dueDate) < now);
+      }
     }
 
     // Sorting
@@ -156,13 +182,22 @@ export function useTodos() {
     });
 
     return result;
-  }, [rawTodos, activeStatus, activePriority, activeCategory, searchTerm, sortBy, order]);
+  }, [
+    rawTodos,
+    activeStatus,
+    activePriority,
+    activeCategory,
+    dueDateFilter,
+    searchTerm,
+    sortBy,
+    order,
+  ]);
 
-  // Derived stats array (0ms instant calculation)
+  // Derived stats array
   const stats = useMemo(() => {
     const now = new Date();
     const total = rawTodos.length;
-    const completed = rawTodos.filter((t) => t.completed).length;
+    const completed = rawTodos.filter((t) => t.completed || t.kanbanStatus === 'done').length;
     const pending = total - completed;
     const highPriority = rawTodos.filter(
       (t) => (t.priority || '').toLowerCase() === 'high'
@@ -199,8 +234,10 @@ export function useTodos() {
       title: todoData.title?.trim() || '',
       description: todoData.description?.trim() || '',
       completed: Boolean(todoData.completed),
+      kanbanStatus: todoData.kanbanStatus || 'todo',
       priority: (todoData.priority || 'medium').toLowerCase(),
       category: todoData.category || 'General',
+      subtasks: Array.isArray(todoData.subtasks) ? todoData.subtasks : [],
       dueDate: todoData.dueDate || null,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
@@ -209,7 +246,7 @@ export function useTodos() {
     setRawTodos((prev) => [newTodoPayload, ...prev]);
 
     try {
-      const res = await todoService.createTodo(todoData, userId);
+      const res = await todoService.createTodo(newTodoPayload, userId);
       const created = res?.data?.todo;
       if (created) {
         setRawTodos((prev) =>
@@ -221,7 +258,7 @@ export function useTodos() {
     } catch (err) {
       setRawTodos((prev) => prev.filter((t) => t.id !== tempId && t._id !== tempId));
       toast.error(err.message || 'Failed to create task');
-      throw err;
+      return null;
     }
   };
 
@@ -241,7 +278,61 @@ export function useTodos() {
     } catch (err) {
       toast.error(err.message || 'Failed to update task');
       fetchTodos();
-      throw err;
+      return null;
+    }
+  };
+
+  // Toggle Subtask Completion
+  const toggleSubtask = async (todoId, subtaskId) => {
+    const target = rawTodos.find((t) => t._id === todoId || t.id === todoId);
+    if (!target) return;
+
+    const updatedSubtasks = (target.subtasks || []).map((s) =>
+      s.id === subtaskId ? { ...s, completed: !s.completed } : s
+    );
+
+    const allSubtasksDone =
+      updatedSubtasks.length > 0 && updatedSubtasks.every((s) => s.completed);
+
+    const updatedPayload = {
+      subtasks: updatedSubtasks,
+      completed: allSubtasksDone ? true : target.completed,
+    };
+
+    setRawTodos((prev) =>
+      prev.map((t) =>
+        t._id === todoId || t.id === todoId ? { ...t, ...updatedPayload } : t
+      )
+    );
+
+    try {
+      await todoService.updateTodo(todoId, updatedPayload);
+    } catch (err) {
+      console.warn('Subtask update error:', err);
+      fetchTodos();
+    }
+  };
+
+  // Move Kanban Column Status
+  const moveKanbanStatus = async (todoId, newKanbanStatus) => {
+    const isCompleted = newKanbanStatus === 'done';
+    const payload = {
+      kanbanStatus: newKanbanStatus,
+      completed: isCompleted,
+    };
+
+    setRawTodos((prev) =>
+      prev.map((t) =>
+        t._id === todoId || t.id === todoId ? { ...t, ...payload } : t
+      )
+    );
+
+    try {
+      await todoService.updateTodo(todoId, payload);
+      toast.success(`Moved to ${newKanbanStatus.toUpperCase()}! 🚀`);
+    } catch (err) {
+      console.warn('Kanban move error:', err);
+      fetchTodos();
     }
   };
 
@@ -252,29 +343,33 @@ export function useTodos() {
     if (!target) return;
 
     const nextCompleted = !target.completed;
+    const nextKanbanStatus = nextCompleted ? 'done' : 'todo';
 
-    // Instant state mutation
     setRawTodos((prev) =>
       prev.map((t) =>
-        t._id === targetId || t.id === targetId ? { ...t, completed: nextCompleted } : t
+        t._id === targetId || t.id === targetId
+          ? { ...t, completed: nextCompleted, kanbanStatus: nextKanbanStatus }
+          : t
       )
     );
 
     try {
       await todoService.toggleTodo(targetId, nextCompleted);
+      await todoService.updateTodo(targetId, { kanbanStatus: nextKanbanStatus });
       toast.success(nextCompleted ? 'Task completed! ✅' : 'Task marked as pending ⏳');
     } catch (err) {
       toast.error(err.message || 'Failed to toggle task completion');
-      // Rollback on failure
       setRawTodos((prev) =>
         prev.map((t) =>
-          t._id === targetId || t.id === targetId ? { ...t, completed: target.completed } : t
+          t._id === targetId || t.id === targetId
+            ? { ...t, completed: target.completed, kanbanStatus: target.kanbanStatus }
+            : t
         )
       );
     }
   };
 
-  // Delete Todo (Optimistic - 0ms UI update)
+  // Delete Todo (Optimistic)
   const deleteTodo = async (id) => {
     const targetId = id;
     const previousTodos = rawTodos;
@@ -298,13 +393,17 @@ export function useTodos() {
     loading,
     error,
     isOnline,
-    // Filters & Setters
+    // Views & Filters
+    viewMode,
+    setViewMode,
     activeStatus,
     setActiveStatus,
     activePriority,
     setActivePriority,
     activeCategory,
     setActiveCategory,
+    dueDateFilter,
+    setDueDateFilter,
     searchTerm,
     setSearchTerm,
     sortBy,
@@ -314,10 +413,11 @@ export function useTodos() {
     // Actions
     addTodo,
     updateTodo,
+    toggleSubtask,
+    moveKanbanStatus,
     toggleTodo,
     deleteTodo,
     setRawTodos,
     refresh: fetchTodos,
   };
 }
-

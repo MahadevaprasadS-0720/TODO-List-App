@@ -17,38 +17,42 @@ export default function StatsOverview({ stats }) {
     {
       title: 'Total Tasks',
       value: total,
-      subtext: `${completionPercentage}% overall completion`,
+      subtext: `${completionPercentage}% completion rate`,
       icon: Layers,
-      color: 'from-blue-500 to-indigo-600',
-      badgeBg: isDark ? 'bg-blue-500/10 text-blue-400 border-blue-500/20' : 'bg-blue-50 text-blue-600 border-blue-200',
-      glow: 'shadow-blue-500/10',
+      accentColor: 'from-cyan-500 to-teal-500',
+      badgeClass: isDark
+        ? 'bg-cyan-500/15 text-cyan-400 border-cyan-500/30 shadow-cyan-500/10'
+        : 'bg-cyan-50 text-cyan-600 border-cyan-200',
     },
     {
       title: 'Completed',
       value: completed,
-      subtext: 'Tasks marked finished',
+      subtext: 'Finished goals',
       icon: CheckCircle2,
-      color: 'from-emerald-500 to-teal-600',
-      badgeBg: isDark ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-emerald-50 text-emerald-600 border-emerald-200',
-      glow: 'shadow-emerald-500/10',
+      accentColor: 'from-emerald-500 to-green-500',
+      badgeClass: isDark
+        ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30 shadow-emerald-500/10'
+        : 'bg-emerald-50 text-emerald-600 border-emerald-200',
     },
     {
       title: 'Pending',
       value: pending,
-      subtext: 'Active tasks in progress',
+      subtext: 'Active in progress',
       icon: Clock,
-      color: 'from-amber-500 to-orange-600',
-      badgeBg: isDark ? 'bg-amber-500/10 text-amber-400 border-amber-500/20' : 'bg-amber-50 text-amber-600 border-amber-200',
-      glow: 'shadow-amber-500/10',
+      accentColor: 'from-amber-500 to-orange-500',
+      badgeClass: isDark
+        ? 'bg-amber-500/15 text-amber-400 border-amber-500/30 shadow-amber-500/10'
+        : 'bg-amber-50 text-amber-600 border-amber-200',
     },
     {
       title: 'Overdue',
       value: overdue,
-      subtext: overdue > 0 ? 'Requires immediate action' : 'No overdue tasks',
+      subtext: overdue > 0 ? 'Requires action' : 'All clear',
       icon: AlertTriangle,
-      color: 'from-rose-500 to-pink-600',
-      badgeBg: isDark ? 'bg-rose-500/10 text-rose-400 border-rose-500/20' : 'bg-rose-50 text-rose-600 border-rose-200',
-      glow: 'shadow-rose-500/10',
+      accentColor: 'from-rose-500 to-pink-500',
+      badgeClass: isDark
+        ? 'bg-rose-500/15 text-rose-400 border-rose-500/30 shadow-rose-500/10'
+        : 'bg-rose-50 text-rose-600 border-rose-200',
     },
   ];
 
@@ -60,26 +64,31 @@ export default function StatsOverview({ stats }) {
         return (
           <div
             key={idx}
-            className={`p-5 rounded-2xl transition-all duration-300 shadow-lg ${card.glow} hover:-translate-y-1 ${
-              isDark ? 'glass-card-dark' : 'glass-card-light'
-            } flex items-center justify-between relative overflow-hidden group`}
+            className={`p-5 rounded-3xl transition-all duration-300 ${
+              isDark
+                ? 'bg-gradient-to-br from-slate-900/60 to-slate-950/80 border border-white/10 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.15)] backdrop-blur-xl'
+                : 'bg-white/80 border border-slate-200 shadow-lg backdrop-blur-xl'
+            } flex items-center justify-between relative overflow-hidden group hover:-translate-y-1`}
           >
-            {/* Top ambient color accent line */}
+            {/* Top Accent Line */}
             <div
-              className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${card.color} opacity-80`}
+              className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${card.accentColor}`}
             />
 
             <div>
-              <p className="text-xs font-medium uppercase tracking-wider text-slate-400 mb-1">
+              <p className="text-[11px] font-extrabold uppercase tracking-wider text-slate-500 dark:text-slate-300 mb-1">
                 {card.title}
               </p>
-              <h3 className={`text-3xl font-extrabold tracking-tight ${isDark ? 'text-white' : 'text-slate-900'}`}>
+              <h3 className={`text-4xl font-black tracking-tight ${isDark ? 'text-white' : 'text-slate-900'}`}>
                 {card.value}
               </h3>
-              <p className="text-xs text-slate-400 mt-1">{card.subtext}</p>
+              <p className="text-xs text-slate-600 dark:text-slate-300 mt-1 font-semibold">{card.subtext}</p>
             </div>
 
-            <div className={`p-3 rounded-xl border ${card.badgeBg} transition-transform group-hover:scale-110`}>
+
+            <div
+              className={`p-3.5 rounded-2xl border ${card.badgeClass} backdrop-blur-md transition-transform group-hover:scale-110 shadow-sm`}
+            >
               <Icon className="w-6 h-6" />
             </div>
           </div>
