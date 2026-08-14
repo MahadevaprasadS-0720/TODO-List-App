@@ -6,10 +6,11 @@ import {
   Sun,
   Moon,
   Plus,
-  Activity,
-  Sparkles,
+  LogOut,
+  User as UserIcon,
 } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
+import { useAuth } from '../context/AuthContext';
 
 export default function Navbar({
   searchTerm,
@@ -19,7 +20,11 @@ export default function Navbar({
   toggleSidebar,
 }) {
   const { theme, toggleTheme } = useTheme();
+  const { currentUser, logout } = useAuth();
   const isDark = theme === 'dark';
+
+  const userDisplayName = currentUser?.displayName || currentUser?.email?.split('@')[0] || 'User';
+  const userInitial = userDisplayName.charAt(0).toUpperCase();
 
   return (
     <header
@@ -108,6 +113,32 @@ export default function Navbar({
             <span>{isOnline ? 'API Connected' : 'Connecting...'}</span>
           </div>
 
+          {/* User Profile Info */}
+          {currentUser && (
+            <div
+              className={`flex items-center gap-2 px-2.5 py-1 rounded-full border text-xs font-medium transition ${
+                isDark
+                  ? 'bg-slate-900 border-slate-800 text-slate-200'
+                  : 'bg-slate-100 border-slate-200 text-slate-800'
+              }`}
+            >
+              {currentUser.photoURL ? (
+                <img
+                  src={currentUser.photoURL}
+                  alt={userDisplayName}
+                  className="w-6 h-6 rounded-full object-cover border border-indigo-500/30"
+                />
+              ) : (
+                <div className="w-6 h-6 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-500 text-white flex items-center justify-center font-bold text-[11px]">
+                  {userInitial}
+                </div>
+              )}
+              <span className="hidden md:inline max-w-[100px] truncate">
+                {userDisplayName}
+              </span>
+            </div>
+          )}
+
           {/* Theme Toggle Button */}
           <button
             onClick={toggleTheme}
@@ -134,8 +165,25 @@ export default function Navbar({
             <Plus className="w-4 h-4" />
             <span className="hidden sm:inline">New Task</span>
           </button>
+
+          {/* Logout Button */}
+          {currentUser && (
+            <button
+              onClick={logout}
+              className={`p-2.5 rounded-full border transition-all duration-300 ${
+                isDark
+                  ? 'bg-slate-900 border-slate-800 text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 hover:border-rose-500/20'
+                  : 'bg-slate-100 border-slate-200 text-slate-600 hover:text-rose-600 hover:bg-rose-50 hover:border-rose-200'
+              }`}
+              title="Sign Out"
+              aria-label="Sign out"
+            >
+              <LogOut className="w-4 h-4" />
+            </button>
+          )}
         </div>
       </div>
     </header>
   );
 }
+

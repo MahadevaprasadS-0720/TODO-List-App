@@ -1,10 +1,17 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import toast from 'react-hot-toast';
 import { todoService, formatDoc } from '../services/todoService';
-import { collection, onSnapshot } from 'firebase/firestore';
-import { db } from '../firebase/config';
+import { collection, onSnapshot, query, where } from 'firebase/firestore';
+import { db } from '../firebase';
+import { useAuth } from '../context/AuthContext';
+
+
+
 
 export function useTodos() {
+  const { currentUser } = useAuth();
+  const userId = currentUser?.uid;
+
   // Master state
   const [rawTodos, setRawTodos] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -22,19 +29,25 @@ export function useTodos() {
   // Check Health
   const checkHealth = useCallback(async () => {
     try {
-      await todoService.checkHealth();
+      await todoService.checkHealth(userId);
       setIsOnline(true);
     } catch {
       setIsOnline(navigator.onLine);
     }
-  }, []);
+  }, [userId]);
 
-  // Fetch Raw Todos once or on manual refresh
+
+  // Fetch Raw Todos once or on manual refresh for current user
   const fetchTodos = useCallback(async () => {
+    if (!userId) {
+      setRawTodos([]);
+      setLoading(false);
+      return;
+    }
     setLoading(true);
     setError(null);
     try {
-      const res = await todoService.getTodos({});
+      const res = await todoService.getTodos({}, userId);
       if (res?.data?.todos) {
         setRawTodos(res.data.todos);
       }
@@ -43,16 +56,24 @@ export function useTodos() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [userId]);
 
-  // Real-time Firestore sync setup
+  // Real-time Firestore sync setup scoped to currentUser.uid
   useEffect(() => {
     checkHealth();
+    if (!userId) {
+      setRawTodos([]);
+      setLoading(false);
+      return;
+    }
+
+    setLoading(true);
     let unsubscribe;
     try {
       const colRef = collection(db, 'todos');
+      const q = query(colRef, where('userId', '==', userId));
       unsubscribe = onSnapshot(
-        colRef,
+        q,
         (snapshot) => {
           const liveTodos = snapshot.docs.map(formatDoc);
           setRawTodos(liveTodos);
@@ -72,7 +93,7 @@ export function useTodos() {
     return () => {
       if (unsubscribe) unsubscribe();
     };
-  }, [checkHealth, fetchTodos]);
+  }, [userId, checkHealth, fetchTodos]);
 
   // Derived filtered & sorted todos array (Instant recalculation on filter change)
   const todos = useMemo(() => {
@@ -166,10 +187,15 @@ export function useTodos() {
 
   // Add Todo (Optimistic)
   const addTodo = async (todoData) => {
+    if (!userId) {
+      toast.error('You must be logged in to create tasks');
+      return;
+    }
     const tempId = 'temp-' + Date.now();
     const newTodoPayload = {
       id: tempId,
       _id: tempId,
+      userId: userId,
       title: todoData.title?.trim() || '',
       description: todoData.description?.trim() || '',
       completed: Boolean(todoData.completed),
@@ -183,7 +209,7 @@ export function useTodos() {
     setRawTodos((prev) => [newTodoPayload, ...prev]);
 
     try {
-      const res = await todoService.createTodo(todoData);
+      const res = await todoService.createTodo(todoData, userId);
       const created = res?.data?.todo;
       if (created) {
         setRawTodos((prev) =>
@@ -294,3 +320,4 @@ export function useTodos() {
     refresh: fetchTodos,
   };
 }
+

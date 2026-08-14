@@ -5,9 +5,12 @@ import {
   updateDoc, 
   deleteDoc, 
   doc, 
-  getDoc
+  getDoc,
+  query,
+  where
 } from 'firebase/firestore';
-import { db } from '../firebase/config';
+import { db } from '../firebase';
+
 
 const COLLECTION_NAME = 'todos';
 
@@ -17,6 +20,7 @@ export const formatDoc = (snapshot) => {
   return {
     id: snapshot.id,
     _id: snapshot.id,
+    userId: data.userId || '',
     title: data.title || '',
     description: data.description || '',
     completed: Boolean(data.completed),
@@ -29,20 +33,22 @@ export const formatDoc = (snapshot) => {
 };
 
 export const todoService = {
-  // Fetch all todos with client-side filtering & sorting
-  async getTodos(params = {}) {
+  // Fetch todos filtered by userId with client-side filtering & sorting
+  async getTodos(params = {}, userId = null) {
     try {
       const colRef = collection(db, COLLECTION_NAME);
-      const snapshot = await getDocs(colRef);
+      const targetUserId = userId || params.userId;
+      const q = targetUserId ? query(colRef, where('userId', '==', targetUserId)) : colRef;
+      const snapshot = await getDocs(q);
       let todos = snapshot.docs.map(formatDoc);
 
       // Client-side Filter: Search term
       if (params.search) {
-        const q = params.search.toLowerCase();
+        const searchTerm = params.search.toLowerCase();
         todos = todos.filter(
           (t) =>
-            t.title.toLowerCase().includes(q) ||
-            t.description.toLowerCase().includes(q)
+            t.title.toLowerCase().includes(searchTerm) ||
+            t.description.toLowerCase().includes(searchTerm)
         );
       }
 
@@ -99,10 +105,11 @@ export const todoService = {
   },
 
   // Fetch summary analytics stats with complete key compatibility
-  async getStats() {
+  async getStats(userId = null) {
     try {
       const colRef = collection(db, COLLECTION_NAME);
-      const snapshot = await getDocs(colRef);
+      const q = userId ? query(colRef, where('userId', '==', userId)) : colRef;
+      const snapshot = await getDocs(q);
       const todos = snapshot.docs.map(formatDoc);
 
       const now = new Date();
@@ -120,7 +127,6 @@ export const todoService = {
         pending,
         highPriority,
         overdue,
-        // Dual property alias support
         totalTodos: total,
         completedTodos: completed,
         pendingTodos: pending,
@@ -144,7 +150,7 @@ export const todoService = {
         completedTodos: 0,
         pendingTodos: 0,
         highPriorityTodos: 0,
-        overdueTodos: 0,
+        overdueTodos: overdue || 0,
       };
       return {
         success: true,
@@ -153,10 +159,11 @@ export const todoService = {
     }
   },
 
-  // Create a new todo
-  async createTodo(todoData) {
+  // Create a new todo associated with userId
+  async createTodo(todoData, userId = null) {
     try {
       const payload = {
+        userId: userId || todoData.userId || '',
         title: todoData.title?.trim() || '',
         description: todoData.description?.trim() || '',
         completed: Boolean(todoData.completed),
@@ -184,7 +191,7 @@ export const todoService = {
     }
   },
 
-  // Update existing todo (Optimized: No extra read roundtrips)
+  // Update existing todo
   async updateTodo(id, todoData) {
     try {
       const targetId = id || todoData._id || todoData.id;
@@ -216,7 +223,7 @@ export const todoService = {
     }
   },
 
-  // Toggle completed status (Optimized: Instant write without extra reads)
+  // Toggle completed status
   async toggleTodo(id, nextCompletedState = null) {
     try {
       const targetId = id;
@@ -269,10 +276,11 @@ export const todoService = {
   },
 
   // Connection health check
-  async checkHealth() {
+  async checkHealth(userId = null) {
     try {
       const colRef = collection(db, COLLECTION_NAME);
-      await getDocs(colRef);
+      const q = userId ? query(colRef, where('userId', '==', userId)) : colRef;
+      await getDocs(q);
       return { success: true, message: 'Firebase connected' };
     } catch (error) {
       console.warn('Firebase checkHealth warning:', error.message);
@@ -280,3 +288,5 @@ export const todoService = {
     }
   },
 };
+
+

@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Toaster } from 'react-hot-toast';
 import { ThemeProvider, useTheme } from './context/ThemeContext';
+import { AuthProvider, useAuth } from './context/AuthContext';
+import LoginScreen from './components/LoginScreen';
 import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar';
 import StatsOverview from './components/StatsOverview';
@@ -10,7 +12,7 @@ import TodoList from './components/TodoList';
 import AddTodoModal from './components/AddTodoModal';
 import ConfirmDeleteModal from './components/ConfirmDeleteModal';
 import { useTodos } from './hooks/useTodos';
-import { ArrowUpDown, Filter, RefreshCw, Flame } from 'lucide-react';
+import { ArrowUpDown, Filter, RefreshCw, Flame, Loader2 } from 'lucide-react';
 
 function TodoAppContent() {
   const { theme } = useTheme();
@@ -299,10 +301,39 @@ function TodoAppContent() {
   );
 }
 
+function AuthGate() {
+  const { currentUser, loading } = useAuth();
+  const { theme } = useTheme();
+  const isDark = theme === 'dark';
+
+  if (loading) {
+    return (
+      <div
+        className={`min-h-screen flex flex-col items-center justify-center transition-colors duration-300 ${
+          isDark ? 'bg-slate-950 text-slate-200' : 'bg-slate-50 text-slate-800'
+        }`}
+      >
+        <div className="flex flex-col items-center gap-3">
+          <Loader2 className="w-10 h-10 text-indigo-500 animate-spin" />
+          <p className="text-sm font-medium text-slate-400">Loading your workspace...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!currentUser) {
+    return <LoginScreen />;
+  }
+
+  return <TodoAppContent />;
+}
+
 export default function App() {
   return (
     <ThemeProvider>
-      <TodoAppContent />
+      <AuthProvider>
+        <AuthGate />
+      </AuthProvider>
     </ThemeProvider>
   );
 }
