@@ -1,88 +1,44 @@
-# TaskFlow Pro — Modern Firebase Todo List Application
+<div align="center">
 
-A state-of-the-art Todo application built with React 19, Vite, Tailwind CSS v4, Framer Motion, and Cloud Firebase Firestore backend.
+# 🚀 TaskFlow Pro
+### *The Ultimate Modern Task Management Experience*
 
-![TaskFlow Pro Banner](client/public/favicon.svg)
+[![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://reactjs.org/)
+[![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38BDF8?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
+[![Framer Motion](https://img.shields.io/badge/Framer_Motion-0055FF?style=for-the-badge&logo=framer&logoColor=white)](https://www.framer.com/motion/)
 
----
-
-## Key Features
-
-- **Modern 2026 UI**: Ambient glassmorphism, responsive sidebar, smooth micro-interactions, custom fonts (Inter & Poppins).
-- **Firebase Firestore Backend**: Serverless cloud database operations with automatic synchronization.
-- **Dark & Light Mode**: Instant theme toggle with `localStorage` preference caching.
-- **Drag-and-Drop Reordering**: Interactive 60fps drag reordering powered by Framer Motion.
-- **Completion Progress Bar**: Visual completion percentage fill with dynamic motivation badges.
-- **Category & Priority Color Tags**: Distinct color coding for categories (`Development`, `Work`, `Personal`, `Design`, `General`) and priorities (`High`, `Medium`, `Low`).
-- **Real-Time Toast Alerts**: Success and error notifications using `react-hot-toast`.
-- **Skeleton Loaders & Custom Delete Modal**: Glassmorphism skeleton pulse loading and custom confirmation dialogs.
-- **Keyboard Accessibility**: `Enter` to submit forms, `Esc` to close modal dialogs.
-- **Production Ready**: Full environment variable support and automated build scripts.
+</div>
 
 ---
 
-## Directory Architecture
-
-```
-TODO list app/
-├── client/                     # React + Vite + Tailwind CSS Frontend
-│   ├── src/
-│   │   ├── components/         # Navbar, Sidebar, TodoList, TodoCard, Modals, Progress Bar
-│   │   ├── context/            # ThemeContext (Dark / Light mode)
-│   │   ├── firebase/           # Firebase initialization & Firestore config
-│   │   ├── hooks/useTodos.js   # Custom hook for state & toast feedback
-│   │   └── services/           # Firestore service CRUD layer
-│   ├── .env                    # Firebase Environment variables
-│   ├── .env.example            # Firebase Environment template
-│   ├── index.html              # HTML entry shell & fonts
-│   ├── package.json
-│   └── vite.config.js
-├── package.json                # Root package with client scripts
-├── run_app.bat                 # 1-Click Windows Batch launcher
-├── run_app.ps1                 # 1-Click PowerShell launcher
-├── deployment.md               # Cloud deployment guide (Vercel & Firebase)
-└── README.md                   # Project documentation
-```
+## 🌟 Overview
+**TaskFlow Pro** is a next-generation, feature-rich task management application designed with a sleek UI and fluid animations. Built to deliver lightning-fast performance, it offers seamless real-time syncing, intuitive interactions, and a polished user interface for everyday productivity.
 
 ---
 
-## Environment Variables
-
-### Client (`client/.env`)
-```env
-VITE_FIREBASE_API_KEY=your_api_key_here
-VITE_FIREBASE_AUTH_DOMAIN=your_project_id.firebaseapp.com
-VITE_FIREBASE_PROJECT_ID=your_project_id
-VITE_FIREBASE_STORAGE_BUCKET=your_project_id.firebasestorage.app
-VITE_FIREBASE_MESSAGING_SENDER_ID=your_messaging_sender_id
-VITE_FIREBASE_APP_ID=your_app_id
-```
+## ✨ Key Features
+- **Modern Glassmorphism UI:** Clean, minimalist design with smooth micro-interactions.
+- **Dynamic Progress Tracking:** Real-time completion percentage bar and visual stats.
+- **Dark & Light Mode:** Instant theme switching tailored for any environment.
+- **Smooth Animations:** Powered by Framer Motion for delightful transitions.
+- **Category & Priority Tags:** Color-coded organization to keep your workflow focused.
+- **Cloud Synchronization:** Instant data persistence and reliability.
+- **Responsive Layout:** Perfectly optimized for mobile, tablet, and desktop screens.
 
 ---
 
-## Quick Start (Local Development)
+## 🛠️ Tech Stack
+- **Frontend:** React, Vite, Tailwind CSS, Framer Motion, Lucide Icons
+- **State & Storage:** Cloud Firestore & Local State Management
+- **Deployment:** Firebase Hosting & GitHub
 
-### Option A: 1-Click Launcher (Windows)
-Double click `run_app.bat` or run:
-```powershell
-.\run_app.ps1
-```
+---
 
-### Option B: Manual Command Line
+## 💻 Getting Started Locally
 
-1. **Install & Start Application**:
+To run this project on your local machine, follow these simple steps:
+
+1. **Clone the repository:**
    ```bash
-   cd client
-   npm install
-   npm run dev
-   ```
-   *Runs on `http://localhost:3000`*
-
----
-
-## Production Build
-
-To build the client application for production:
-```bash
-npm run build
-```
+   git clone [https://github.com/MahadevaprasadS-0720/TODO-List-App.git](https://github.com/MahadevaprasadS-0720/TODO-List-App.git)
